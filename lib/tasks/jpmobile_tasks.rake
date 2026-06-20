@@ -101,12 +101,15 @@ namespace :test do
     end
 
     # run tests in rails
+    gem_root = Dir.pwd
     Dir.chdir(rails_root) do
       Bundler.with_unbundled_env do
         original_env = ENV.to_hash
 
         ENV.update('RBENV_VERSION' => nil)
         ENV.update('RBENV_DIR' => nil)
+        # Let the app's SimpleCov write results back into the gem's coverage dir.
+        ENV.update('JPMOBILE_GEM_ROOT' => gem_root) if ENV['COVERAGE']
 
         system 'bundle install'
         system 'bin/rails db:migrate RAILS_ENV=test' unless skip
